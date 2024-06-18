@@ -1,4 +1,4 @@
-import { Departament, Role } from "@prisma/client";
+import { Department, Role } from "@prisma/client";
 import { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
@@ -45,7 +45,7 @@ export const authConfig = {
         session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.role = token.role as Role;
-        session.user.department = token.department as Departament;
+        session.user.department = token.department as Department;
       }
 
       return session;
