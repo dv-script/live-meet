@@ -6,13 +6,13 @@ async function createRooms() {
   try {
     await db.room.createMany({
       data: [
-        { name: "Maracanã", capacity: 12, location: "4° andar" },
-        { name: "Wembley", capacity: 8, location: "3° andar" },
-        { name: "Santiago Bernabéu", capacity: 8, location: "3° andar" },
-        { name: "San Siro", capacity: 4, location: "5° andar" },
-        { name: "Old Trafford", capacity: 4, location: "5° andar" },
-        { name: "Camp Nou", capacity: 4, location: "5° andar" },
-        { name: "Anfield", capacity: 4, location: "5° andar" },
+        { name: "Maracanã", capacity: 12, location: "ANDAR3" },
+        { name: "Wembley", capacity: 8, location: "ANDAR3" },
+        { name: "Santiago Bernabéu", capacity: 8, location: "ANDAR4" },
+        { name: "San Siro", capacity: 4, location: "ANDAR4" },
+        { name: "Old Trafford", capacity: 4, location: "ANDAR5" },
+        { name: "Camp Nou", capacity: 4, location: "ANDAR5" },
+        { name: "Anfield", capacity: 4, location: "ANDAR5" },
       ],
     });
   } catch (error) {
@@ -20,8 +20,12 @@ async function createRooms() {
   }
 }
 
+async function deleteUser() {
+  await db.user.deleteMany({});
+}
+
 async function main() {
-  await createRooms();
+  await deleteUser();
 }
 
 main()

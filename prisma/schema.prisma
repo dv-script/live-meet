@@ -3,39 +3,51 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id         String      @id @default(uuid())
-  email      String      @unique
-  name       String
-  password   String
-  role       Role        @default(USER)
-  department Departament
-  bookings   Booking[]
-  meetings   Meeting[]
+  id                String              @id @default(uuid())
+  email             String              @unique
+  emailVerified     DateTime?
+  name              String
+  password          String
+  role              Role                @default(USER)
+  department        Department
+  bookings          Booking[]
+  meetings          Meeting[]
+  verificationToken VerificationToken[]
+}
+
+model VerificationToken {
+  id      String   @id @default(uuid())
+  userId  String
+  email   String
+  token   String
+  expires DateTime
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Room {
-  id           Int            @id @default(autoincrement())
-  name         String
-  location     String
-  capacity     Int
-  Booking      Booking[]
-  Meeting      Meeting[]
-  Availability Availability[]
+  id             Int            @id @default(autoincrement())
+  name           String
+  location       Location
+  capacity       Int
+  availabilities Availability[]
+  bookings       Booking[]
+  meetings       Meeting[]
 }
 
 model Booking {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   roomId    Int
   startTime DateTime
   endTime   DateTime
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Meeting {
@@ -45,8 +57,8 @@ model Meeting {
   startTime    DateTime
   endTime      DateTime
   ownerId      String
-  owner        User                 @relation(fields: [ownerId], references: [id])
   roomId       Int
+  owner        User                 @relation(fields: [ownerId], references: [id])
   room         Room                 @relation(fields: [roomId], references: [id])
   participants MeetingParticipant[]
 }
@@ -65,13 +77,12 @@ model Availability {
   startTime DateTime
   endTime   DateTime
   roomId    Int
-
-  room Room @relation(fields: [roomId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
 
   @@unique([roomId, startTime, endTime])
 }
 
-enum Departament {
+enum Department {
   COMERCIAL
   DIREITOS
   CONTEUDO
@@ -86,4 +97,12 @@ enum Role {
   USER
   ADMIN
   SUPERADMIN
+}
+
+enum Location {
+  ANDAR1
+  ANDAR2
+  ANDAR3
+  ANDAR4
+  ANDAR5
 }
