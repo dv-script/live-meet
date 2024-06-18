@@ -25,11 +25,14 @@
       "@/*": [
         "./src/*"
       ],
-      "@components/*": [
-        "./src/components/*"
+      "@ui/*": [
+        "./src/app/_components/ui/*"
       ],
       "@public/*": [
         "./public/*"
+      ],
+      "@actions/*": [
+        "./src/app/_actions/*"
       ]
     }
   },
