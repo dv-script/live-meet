@@ -1,10 +1,10 @@
 import { db } from "../_lib/prisma";
 
-export async function getVerificationTokenByEmail(email: string) {
+export async function getVerificationTokenByEmail(token: string) {
   try {
     return db.verificationToken.findFirst({
       where: {
-        email,
+        token,
       },
     });
   } catch (error) {
