@@ -47,7 +47,7 @@ export async function authenticateUser(_prevState: State, formData: FormData) {
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CredentialsSignin":
+        case "CallbackRouteError":
           return {
             message:
               "E-mail ou senha estão inválidos. Por favor, tente novamente.",
