@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { Button } from "./ui/button";
 import {
   Sheet,
   SheetClose,
@@ -8,14 +8,28 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { Button } from "./ui/button";
-import { HomeIcon, LogInIcon, MenuIcon, Shield } from "lucide-react";
-import LogoImage from "@public/logo.png";
+import Image from "next/image";
+import {
+  Building,
+  HeartIcon,
+  HomeIcon,
+  LogInIcon,
+  MenuIcon,
+  SettingsIcon,
+  Shield,
+} from "lucide-react";
 import { Separator } from "./ui/separator";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { db } from "../_lib/prisma";
+import { SignOutDialog } from "./sign-out-dialog";
 import { auth } from "../auth/providers";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import LogoImage from "@public/logo.png";
 
 export async function Header() {
+  const rooms = await db.room.findMany({
+    orderBy: { name: "asc" },
+  });
+
   const session = await auth();
 
   return (
@@ -23,7 +37,7 @@ export async function Header() {
       <Link href="/" className="relative h-16 w-16">
         <Image
           src={LogoImage.src}
-          alt="Cazé Logo"
+          alt="Livemode Logo"
           fill
           sizes="100%"
           className="object-contain"
@@ -100,7 +114,66 @@ export async function Header() {
                   </Button>
                 </SheetClose>
               )}
+              {session && (
+                <>
+                  <SheetClose asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                      asChild
+                    >
+                      <Link href="/my-favorite-rooms">
+                        <HeartIcon size={16} />
+                        <span className="block">Salas Favoritadas</span>
+                      </Link>
+                    </Button>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                      asChild
+                    >
+                      <Link href="/settings">
+                        <SettingsIcon size={16} />
+                        <span className="block">Configurações</span>
+                      </Link>
+                    </Button>
+                  </SheetClose>
+                </>
+              )}
             </div>
+            {session && (
+              <>
+                <div className="py-3">
+                  <Separator />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm mb-2 pl-4 font-semibold">
+                    Salas de Reunião
+                  </span>
+                  {rooms.map((room) => (
+                    <SheetClose key={room.id} asChild>
+                      <Button
+                        asChild
+                        variant="ghost"
+                        className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                      >
+                        <Link href={`/room/${room.id}`}>
+                          <Building />
+                          <span>{room.name}</span>
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  ))}
+                </div>
+
+                <div className="py-3">
+                  <Separator />
+                </div>
+                <SignOutDialog />
+              </>
+            )}
           </div>
         </SheetContent>
       </Sheet>
