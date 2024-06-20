@@ -21,14 +21,14 @@ export function SignInForm() {
             label="E-mail"
             name="email"
             placeholder="Digite sua conta de e-mail"
-            errorMessages={state.errors?.email}
+            errorMessages={state?.errors?.email}
           />
           <FormField
             label="Senha"
             name="password"
             placeholder="Digite sua senha"
             type="password"
-            errorMessages={state.errors?.password}
+            errorMessages={state?.errors?.password}
           />
           {state.success === false && (
             <FormError errorMessage={state.message} />
