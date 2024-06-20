@@ -36,3 +36,24 @@ export function departmentValidation(department: string) {
       return "NEGOCIOS";
   }
 }
+
+export function getDeparmentName(department: Department) {
+  switch (department) {
+    case "COMERCIAL":
+      return "Comercial";
+    case "FINANCEIRO":
+      return "Financeiro";
+    case "CONTEUDO":
+      return "Tranmissão e Conteúdo";
+    case "OPERACOES":
+      return "Engenharia e Operações";
+    case "RH":
+      return "Recursos Humanos";
+    case "DIREITOS":
+      return "Direitos";
+    case "ENTIDADES":
+      return "Entidades Esportivas";
+    case "NEGOCIOS":
+      return "Novos Negócios";
+  }
+}
