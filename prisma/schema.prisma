@@ -19,6 +19,8 @@ model User {
   bookings          Booking[]
   meetings          Meeting[]
   verificationToken VerificationToken[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 }
 
 model VerificationToken {
@@ -48,6 +50,8 @@ model Booking {
   endTime   DateTime
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Meeting {
