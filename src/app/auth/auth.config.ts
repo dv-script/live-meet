@@ -1,22 +1,28 @@
-import { Departament, Role } from "@prisma/client";
+import { Role, Department } from "@prisma/client";
 import { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
   providers: [],
   useSecureCookies: process.env.NODE_ENV === "production",
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    strategy: "jwt",
-  },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const userLoggedIn = !!auth?.user;
       const isHomeRoute = nextUrl.pathname === "/";
       const isAuthRoutes = nextUrl.pathname.startsWith("/auth");
       const authOrHomeRoutes = isHomeRoute || isAuthRoutes;
+      const verifiedEmail = auth?.user?.emailVerified;
 
       const isAdminRoutes = nextUrl.pathname.startsWith("/admin");
       const isAdmin = auth?.user?.role === "ADMIN";
+
+      if (!userLoggedIn && !isAuthRoutes) {
+        return Response.redirect(new URL("/auth/sign-in", nextUrl));
+      }
+
+      if (!!verifiedEmail && !isAuthRoutes) {
+        return Response.redirect(new URL("/auth/sign-in", nextUrl));
+      }
 
       if (userLoggedIn && isHomeRoute) {
         return Response.redirect(new URL("/booking", nextUrl));
@@ -45,7 +51,7 @@ export const authConfig = {
         session.user.name = token.name;
         session.user.email = token.email as string;
         session.user.role = token.role as Role;
-        session.user.department = token.department as Departament;
+        session.user.department = token.department as Department;
       }
 
       return session;
