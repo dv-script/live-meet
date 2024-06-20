@@ -6,6 +6,7 @@ interface FormFieldProps {
   name: string;
   placeholder: string;
   type?: string;
+  defaultValue?: string | number;
   errorMessages?: string[];
 }
 
@@ -14,15 +15,17 @@ export function FormField({
   name,
   placeholder,
   type,
+  defaultValue,
   errorMessages,
 }: FormFieldProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <Label>{label}</Label>
       <Input
         type={type}
         name={name}
         placeholder={placeholder}
+        defaultValue={defaultValue}
         className={
           errorMessages && errorMessages.length > 0 ? "border-red-500" : ""
         }
