@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Role, Department } from "@prisma/client";
+=======
+import { Department, Role } from "@prisma/client";
+>>>>>>> 4f319fae5521788b5775fcd0040476382cfa1dbc
 import { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
