@@ -28,7 +28,7 @@ export function locationValidation(location: string) {
   }
 }
 
-export function getRoleName(location: Location) {
+export function getLocationName(location: Location) {
   switch (location) {
     case "ANDAR1":
       return "1° Andar";
