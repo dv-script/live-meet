@@ -2,6 +2,7 @@
 import { signIn } from "@/app/auth/providers";
 import { AuthError } from "next-auth";
 import { z } from "zod";
+import { db } from "../_lib/prisma";
 
 const authenticateUserSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um e-mail válido" }),
@@ -33,6 +34,18 @@ export async function authenticateUser(_prevState: State, formData: FormData) {
   }
 
   const { email, password } = validatedFields.data;
+
+  const emailVerified = await db.user.findFirst({
+    where: { email },
+    select: { emailVerified: true },
+  });
+
+  if (emailVerified?.emailVerified === null) {
+    return {
+      message: "E-mail não verificado. Por favor, cheque sua caixa de e-mail.",
+      success: false,
+    };
+  }
 
   try {
     await signIn("credentials", {
