@@ -21,6 +21,7 @@ model User {
   verificationToken VerificationToken[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
+  Room              Room[]
 }
 
 model VerificationToken {
@@ -30,16 +31,22 @@ model VerificationToken {
   token   String
   expires DateTime
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, email])
 }
 
 model Room {
   id             Int            @id @default(autoincrement())
-  name           String
+  name           String         @unique
   location       Location
   capacity       Int
   availabilities Availability[]
   bookings       Booking[]
   meetings       Meeting[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  User           User?          @relation(fields: [userId], references: [id])
+  userId         String?
 }
 
 model Booking {
@@ -65,6 +72,10 @@ model Meeting {
   owner        User                 @relation(fields: [ownerId], references: [id])
   room         Room                 @relation(fields: [roomId], references: [id])
   participants MeetingParticipant[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@unique([roomId, startTime, endTime])
 }
 
 model MeetingParticipant {
