@@ -57,6 +57,13 @@ export function EditRoomForm({
         errorMessages={state.errors?.name}
       />
       <FormField
+        label="Descrição"
+        name="description"
+        placeholder="Insira uma descrição para a sala de reunião"
+        defaultValue={room.description ?? ""}
+        errorMessages={state.errors?.description}
+      />
+      <FormField
         label="Capacidade máxima"
         name="capacity"
         type="number"

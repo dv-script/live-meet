@@ -10,6 +10,7 @@ const addNewRoomSchema = z.object({
   name: z
     .string()
     .min(3, { message: "Nome da sala precisa ter no mínimo 3 caracteres" }),
+  description: z.string().optional(),
   capacity: z
     .number({ message: "A capacidade precisa ser um número" })
     .int({ message: "A capacidade precisa ser inteira" })
@@ -22,6 +23,7 @@ const addNewRoomSchema = z.object({
 export type State = {
   errors?: {
     name?: string[];
+    description?: string[];
     capacity?: string[];
     location?: string[];
   };
@@ -32,6 +34,7 @@ export type State = {
 export async function addNewRoom(_prevState: State, formData: FormData) {
   const validatedFields = addNewRoomSchema.safeParse({
     name: formData.get("name"),
+    description: formData.get("description"),
     capacity: Number(formData.get("capacity")),
     location: formData.get("location"),
   });
@@ -43,7 +46,7 @@ export async function addNewRoom(_prevState: State, formData: FormData) {
     };
   }
 
-  const { name, capacity, location } = validatedFields.data;
+  const { name, capacity, location, description } = validatedFields.data;
 
   const roomExists = await db.room.findFirst({
     where: {
@@ -65,6 +68,7 @@ export async function addNewRoom(_prevState: State, formData: FormData) {
     await db.room.create({
       data: {
         name,
+        description,
         capacity,
         location: validLocation as Location,
       },

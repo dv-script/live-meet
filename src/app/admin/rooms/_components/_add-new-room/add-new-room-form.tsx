@@ -50,6 +50,12 @@ export function AddNewRoomForm({
         errorMessages={state.errors?.name}
       />
       <FormField
+        label="Descrição"
+        name="description"
+        placeholder="Insira uma descrição para a sala de reunião"
+        errorMessages={state.errors?.description}
+      />
+      <FormField
         label="Capaciade máxima"
         name="capacity"
         type="number"

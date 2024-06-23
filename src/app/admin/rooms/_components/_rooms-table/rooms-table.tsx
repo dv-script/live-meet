@@ -91,6 +91,8 @@ export function RoomsTable({ roomsData }: { roomsData: Room[] }) {
                   >
                     {column.id === "name"
                       ? "Nome"
+                      : column.id === "description"
+                      ? "Descrição"
                       : column.id === "capacity"
                       ? "Capacidade"
                       : column.id === "location"

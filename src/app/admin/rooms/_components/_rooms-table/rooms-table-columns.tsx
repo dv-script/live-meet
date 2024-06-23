@@ -55,6 +55,34 @@ export const roomsTableColumns: ColumnDef<Room>[] = [
     },
   },
   {
+    accessorKey: "description",
+    header: ({ column }) => {
+      return (
+        <div className="flex items-center gap-1">
+          <span>Descrição</span>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            <ArrowUpDown size={12} />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const description = row.getValue("description") as string;
+
+      if (!description) {
+        return <div className="text-gray-500">Sem descrição</div>;
+      } else {
+        return (
+          <div className="text-gray-500 dark:text-gray-400">{description}</div>
+        );
+      }
+    },
+  },
+  {
     accessorKey: "capacity",
     header: ({ column }) => {
       return (

@@ -11,6 +11,7 @@ const editRoomSchema = z.object({
   name: z
     .string()
     .min(3, { message: "Nome da sala precisa ter no mínimo 3 caracteres" }),
+  description: z.string().optional(),
   capacity: z
     .number({ message: "A capacidade precisa ser um número" })
     .int({ message: "A capacidade precisa ser inteira" })
@@ -24,6 +25,7 @@ export type State = {
   errors?: {
     id?: string[];
     name?: string[];
+    description?: string[];
     capacity?: string[];
     location?: string[];
   };
@@ -35,6 +37,7 @@ export async function editRoom(_prevState: State, formData: FormData) {
   const validatedFields = editRoomSchema.safeParse({
     id: Number(formData.get("id")),
     name: formData.get("name"),
+    description: formData.get("description"),
     capacity: Number(formData.get("capacity")),
     location: formData.get("location"),
   });
@@ -46,7 +49,7 @@ export async function editRoom(_prevState: State, formData: FormData) {
     };
   }
 
-  const { id, name, capacity, location } = validatedFields.data;
+  const { id, name, description, capacity, location } = validatedFields.data;
 
   const roomExists = await db.room.findUniqueOrThrow({
     where: {
@@ -73,6 +76,7 @@ export async function editRoom(_prevState: State, formData: FormData) {
       },
       data: {
         name,
+        description,
         capacity,
         location: validLocation as Location,
       },
