@@ -9,19 +9,18 @@ datasource db {
 }
 
 model User {
-  id                String              @id @default(uuid())
-  email             String              @unique
-  emailVerified     DateTime?
-  name              String
-  password          String
-  role              Role                @default(USER)
-  department        Department
-  bookings          Booking[]
-  meetings          Meeting[]
-  verificationToken VerificationToken[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  Room              Room[]
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  emailVerified      DateTime?
+  name               String
+  password           String
+  role               Role                @default(USER)
+  department         Department
+  bookings           Booking[]
+  meetings           Meeting[]
+  verificationTokens VerificationToken[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model VerificationToken {
@@ -36,65 +35,41 @@ model VerificationToken {
 }
 
 model Room {
-  id             Int            @id @default(autoincrement())
-  name           String         @unique
-  location       Location
-  capacity       Int
-  availabilities Availability[]
-  bookings       Booking[]
-  meetings       Meeting[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  User           User?          @relation(fields: [userId], references: [id])
-  userId         String?
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  location    Location
+  capacity    Int
+  bookings    Booking[]
+  meetings    Meeting[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Booking {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
   roomId    Int
   startTime DateTime
-  endTime   DateTime
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  meetings  Meeting[]
 }
 
 model Meeting {
-  id           String               @id @default(uuid())
-  title        String
-  description  String?
-  startTime    DateTime
-  endTime      DateTime
-  ownerId      String
-  roomId       Int
-  owner        User                 @relation(fields: [ownerId], references: [id])
-  room         Room                 @relation(fields: [roomId], references: [id])
-  participants MeetingParticipant[]
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-
-  @@unique([roomId, startTime, endTime])
-}
-
-model MeetingParticipant {
-  id        Int     @id @default(autoincrement())
-  meetingId String
-  userId    String
-  meeting   Meeting @relation(fields: [meetingId], references: [id])
-
-  @@unique([meetingId, userId])
-}
-
-model Availability {
-  id        Int      @id @default(autoincrement())
-  startTime DateTime
-  endTime   DateTime
-  roomId    Int
-  room      Room     @relation(fields: [roomId], references: [id])
-
-  @@unique([roomId, startTime, endTime])
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  room        Room?    @relation(fields: [roomId], references: [id])
+  roomId      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum Department {

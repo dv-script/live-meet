@@ -39,7 +39,7 @@ export async function resendEmailVerification(
 
   const userInDb = await db.user.findUnique({
     where: { email },
-    include: { verificationToken: true },
+    include: { verificationTokens: true },
   });
 
   if (!userInDb) {
@@ -58,7 +58,7 @@ export async function resendEmailVerification(
 
   console.log(userInDb, userInDb?.emailVerified);
 
-  const tokenStillValid = userInDb?.verificationToken.flatMap((token) => {
+  const tokenStillValid = userInDb?.verificationTokens.flatMap((token) => {
     return new Date(token.expires) > new Date();
   });
 
@@ -75,7 +75,7 @@ export async function resendEmailVerification(
   try {
     await db.user.update({
       where: { email },
-      data: { verificationToken: { connect: { id: newToken.id } } },
+      data: { verificationTokens: { connect: { id: newToken.id } } },
     });
 
     await sendEmailVerification({

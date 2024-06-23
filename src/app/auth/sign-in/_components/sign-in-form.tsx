@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@ui/input";
 import { Button } from "@ui/button";
 import Link from "next/link";
 import { useFormState } from "react-dom";
@@ -30,7 +29,7 @@ export function SignInForm() {
             type="password"
             errorMessages={state?.errors?.password}
           />
-          {state.success === false && (
+          {state?.success === false && (
             <FormError errorMessage={state.message} />
           )}
         </div>
