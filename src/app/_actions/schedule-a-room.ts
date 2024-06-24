@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { db } from "../_lib/prisma";
 import { revalidatePath } from "next/cache";
+import { subMinutes } from "date-fns";
 
 const scheduleARoomSchema = z.object({
   userId: z.string(),
@@ -50,12 +51,12 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
     where: {
       userId,
       startTime: {
-        lte: new Date(),
+        lte: subMinutes(new Date(), 45),
       },
     },
   });
 
-  if (hourDate < new Date().toISOString()) {
+  if (hourDate < subMinutes(new Date(), 45).toISOString()) {
     return {
       message: "Não é possível reservar salas em horários passados.",
       success: false,
