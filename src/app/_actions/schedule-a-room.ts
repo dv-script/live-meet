@@ -51,12 +51,12 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
     where: {
       userId,
       startTime: {
-        lte: subMinutes(new Date(), 45),
+        lte: subMinutes(new Date(), 5),
       },
     },
   });
 
-  if (hourDate < subMinutes(new Date(), 45).toISOString()) {
+  if (hourDate < subMinutes(new Date(), 5).toISOString()) {
     return {
       message: "Não é possível reservar salas em horários passados.",
       success: false,
