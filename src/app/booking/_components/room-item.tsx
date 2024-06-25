@@ -19,15 +19,6 @@ export function RoomItem({
   selectedDate: Date;
   userId: string | undefined;
 }) {
-  const roomHasBookings = room.bookings.length > 0 && {
-    color: "bg-yellow-500",
-    title: "Parcialmente Reservado",
-  };
-  const roomIsFullyBooked = room.bookings.length === 24 && {
-    color: "bg-red-500",
-    title: "Indisponível",
-  };
-
   return (
     <Card>
       <CardContent className="p-6">
@@ -66,25 +57,14 @@ export function RoomItem({
                 {format(selectedDate, "dd MMM", { locale: ptBR })}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  roomHasBookings && roomHasBookings.color
-                } ${roomIsFullyBooked && roomIsFullyBooked.color}
-                 bg-green-500
-                `}
-              />
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {roomHasBookings && roomHasBookings.title}
-                {roomIsFullyBooked && roomIsFullyBooked.title}
-                {!roomHasBookings && !roomIsFullyBooked && "Disponível"}
-              </span>
-            </div>
           </div>
           <div className="grid grid-cols-4 gap-2">
-            {Array.from({ length: 24 }).map((_, index) => {
+            {Array.from({ length: 30 }).map((_, index) => {
               const hourDate = new Date(selectedDate);
-              hourDate.setHours(index, 0, 0, 0);
+              const startHour = 9;
+              const hourToAdd = Math.floor(index / 2) + startHour;
+              const minutesToAdd = (index % 2) * 30;
+              hourDate.setHours(hourToAdd, minutesToAdd, 0, 0);
 
               const isSpecificHourBooked = room.bookings.some(
                 (booking) =>
@@ -93,7 +73,7 @@ export function RoomItem({
               );
 
               const now = new Date();
-              const adjustedNow = subMinutes(now, 45);
+              const adjustedNow = subMinutes(now, 5);
 
               const hourHasPassed = isAfter(adjustedNow, hourDate);
               return (
