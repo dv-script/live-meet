@@ -12,7 +12,7 @@ export function RoomList({
   userId,
 }: {
   rooms: Prisma.RoomGetPayload<{
-    include: { bookings: true };
+    include: { bookings: { include: { meetings: true } } };
   }>[];
   userId: string | undefined;
 }) {
