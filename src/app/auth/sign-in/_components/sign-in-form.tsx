@@ -29,7 +29,7 @@ export function SignInForm() {
             type="password"
             errorMessages={state?.errors?.password}
           />
-          {state?.success === false && (
+          {!state?.success && state?.message && (
             <FormError errorMessage={state.message} />
           )}
         </div>

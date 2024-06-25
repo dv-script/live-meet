@@ -29,7 +29,7 @@ export const authConfig = {
       }
 
       if (!userLoggedIn && !authOrHomeRoutes) {
-        return Response.redirect(new URL("/", nextUrl));
+        return Response.redirect(new URL("/auth/sign-in", nextUrl));
       }
 
       if (userLoggedIn && authOrHomeRoutes) {

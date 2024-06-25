@@ -1,4 +1,5 @@
 "use server";
+
 import { signIn } from "@/app/auth/providers";
 import { AuthError } from "next-auth";
 import { z } from "zod";
@@ -35,12 +36,12 @@ export async function authenticateUser(_prevState: State, formData: FormData) {
 
   const { email, password } = validatedFields.data;
 
-  const emailVerified = await db.user.findFirst({
+  const user = await db.user.findFirstOrThrow({
     where: { email },
     select: { emailVerified: true },
   });
 
-  if (emailVerified?.emailVerified === null) {
+  if (user?.emailVerified === null) {
     return {
       message: "E-mail não verificado. Por favor, cheque sua caixa de e-mail.",
       success: false,
@@ -53,6 +54,7 @@ export async function authenticateUser(_prevState: State, formData: FormData) {
       password,
       redirectTo: "/booking",
     });
+
     return {
       success: true,
       message: "Você foi logado com sucesso.",

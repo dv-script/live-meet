@@ -5,6 +5,6 @@ import { signOut } from "@/app/auth/providers";
 export async function logout() {
   await signOut({
     redirect: true,
-    redirectTo: "/",
+    redirectTo: "/auth/sign-in",
   });
 }
