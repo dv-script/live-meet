@@ -7,6 +7,7 @@ import { format, isAfter, subMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getLocationName } from "@/app/_utils/locations";
 import { BookingDialog } from "./booking-dialog";
+import { BookedByUserDetailsDialog } from "./booked-by-user-details-dialog";
 
 export function RoomItem({
   room,
@@ -14,7 +15,7 @@ export function RoomItem({
   userId,
 }: {
   room: Prisma.RoomGetPayload<{
-    include: { bookings: true };
+    include: { bookings: { include: { meetings: true } } };
   }>;
   selectedDate: Date;
   userId: string | undefined;
@@ -72,18 +73,31 @@ export function RoomItem({
                   format(hourDate, "yyyy-MM-dd HH:mm")
               );
 
-              const now = new Date();
-              const adjustedNow = subMinutes(now, 5);
+              const bookedByUser = room.bookings.find(
+                (booking) =>
+                  format(booking.startTime, "yyyy-MM-dd HH:mm") ===
+                    format(hourDate, "yyyy-MM-dd HH:mm") &&
+                  booking.userId === userId
+              );
 
-              const hourHasPassed = isAfter(adjustedNow, hourDate);
+              if (bookedByUser) {
+                return (
+                  <BookedByUserDetailsDialog
+                    key={index}
+                    room={room}
+                    hourDate={hourDate}
+                    userId={userId}
+                  />
+                );
+              }
+
               return (
                 <BookingDialog
                   key={index}
-                  room={room}
-                  userId={userId}
                   hourDate={hourDate}
-                  hourHasPassed={hourHasPassed}
+                  room={room}
                   isBooked={isSpecificHourBooked}
+                  userId={userId}
                 />
               );
             })}
