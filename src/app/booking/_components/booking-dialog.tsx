@@ -8,23 +8,21 @@ import {
   DialogTitle,
 } from "@/app/_components/ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import { format } from "date-fns";
+import { format, isAfter, subMinutes } from "date-fns";
 import { useState } from "react";
 import { BookingForm } from "./booking-form";
 import { Prisma } from "@prisma/client";
 import { ptBR } from "date-fns/locale";
 
 export function BookingDialog({
-  hourHasPassed,
   hourDate,
   room,
   isBooked,
   userId,
 }: {
-  hourHasPassed: boolean;
   hourDate: Date;
   room: Prisma.RoomGetPayload<{
-    include: { bookings: true };
+    include: { bookings: { include: { meetings: true } } };
   }>;
   isBooked: boolean;
   userId: string | undefined;
@@ -39,6 +37,11 @@ export function BookingDialog({
   const handleSelectHour = (e: React.MouseEvent<HTMLButtonElement>) => {
     setSelectedHourDate(e.currentTarget.value);
   };
+
+  const now = new Date();
+  const adjustedNow = subMinutes(now, 5);
+
+  const hourHasPassed = isAfter(adjustedNow, hourDate);
 
   const formatedHourDate = format(hourDate, "HH:mm");
   const formatedDate = format(hourDate, "dd MMMM", { locale: ptBR });
