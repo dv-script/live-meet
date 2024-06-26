@@ -28,7 +28,8 @@ export function UpcomingMeetings({
           room.bookings.map((booking) =>
             booking.meetings.map(
               (meeting) =>
-                booking.startTime <= addHours(new Date(), 2) && (
+                booking.startTime <= addHours(new Date(), 2) &&
+                booking.startTime > new Date() && (
                   <div className="flex flex-col py-1" key={meeting.id}>
                     <div className="flex items-center gap-1">
                       <h3 className="font-semibold">{meeting.title}</h3>
