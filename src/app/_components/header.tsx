@@ -152,20 +152,22 @@ export async function Header() {
                   <span className="text-sm mb-2 pl-4 font-semibold">
                     Salas de Reunião
                   </span>
-                  {rooms.map((room) => (
-                    <SheetClose key={room.id} asChild>
-                      <Button
-                        asChild
-                        variant="ghost"
-                        className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
-                      >
-                        <Link href={`/room/${room.id}`}>
-                          <Building />
-                          <span>{room.name}</span>
-                        </Link>
-                      </Button>
-                    </SheetClose>
-                  ))}
+                  <div className="flex flex-col gap-1 max-h-40 overflow-y-scroll">
+                    {rooms.map((room) => (
+                      <SheetClose key={room.id} asChild>
+                        <Button
+                          asChild
+                          variant="ghost"
+                          className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                        >
+                          <Link href={`/room/${room.id}`}>
+                            <Building />
+                            <span>{room.name}</span>
+                          </Link>
+                        </Button>
+                      </SheetClose>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="py-3">
