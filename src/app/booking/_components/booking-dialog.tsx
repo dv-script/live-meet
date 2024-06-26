@@ -22,7 +22,11 @@ export function BookingDialog({
 }: {
   hourDate: Date;
   room: Prisma.RoomGetPayload<{
-    include: { bookings: { include: { meetings: true } } };
+    include: {
+      bookings: {
+        include: { meetings: true; user: { select: { name: true } } };
+      };
+    };
   }>;
   isBooked: boolean;
   userId: string | undefined;

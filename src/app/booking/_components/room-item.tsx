@@ -15,7 +15,11 @@ export function RoomItem({
   userId,
 }: {
   room: Prisma.RoomGetPayload<{
-    include: { bookings: { include: { meetings: true } } };
+    include: {
+      bookings: {
+        include: { meetings: true; user: { select: { name: true } } };
+      };
+    };
   }>;
   selectedDate: Date;
   userId: string | undefined;
@@ -86,7 +90,6 @@ export function RoomItem({
                     key={index}
                     room={room}
                     hourDate={hourDate}
-                    userId={userId}
                   />
                 );
               }

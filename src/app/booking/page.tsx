@@ -8,9 +8,7 @@ export default async function Page() {
   const rooms = await db.room.findMany({
     include: {
       bookings: {
-        include: {
-          meetings: true,
-        },
+        include: { user: { select: { name: true } }, meetings: true },
       },
     },
     orderBy: {

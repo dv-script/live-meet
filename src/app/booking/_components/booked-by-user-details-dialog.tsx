@@ -18,13 +18,15 @@ import { EditBookingForm } from "./edit-booking-form";
 export function BookedByUserDetailsDialog({
   hourDate,
   room,
-  userId,
 }: {
   hourDate: Date;
   room: Prisma.RoomGetPayload<{
-    include: { bookings: { include: { meetings: true } } };
+    include: {
+      bookings: {
+        include: { meetings: true; user: { select: { name: true } } };
+      };
+    };
   }>;
-  userId: string | undefined;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenDialog = () => setIsOpen((prev) => !prev);
