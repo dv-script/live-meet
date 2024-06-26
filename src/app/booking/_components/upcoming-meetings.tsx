@@ -41,9 +41,7 @@ export function UpcomingMeetings({
                       </span>
                       {" - "}
                       <span className="text-gray-500 dark:text-gray-400">
-                        {format(new Date(booking.startTime), "HH:mm", {
-                          locale: ptBR,
-                        })}
+                        {format(booking.startTime, "HH:mm", { locale: ptBR })}
                       </span>
                     </div>
                     {meeting.description && (
