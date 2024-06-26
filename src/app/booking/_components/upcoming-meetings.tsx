@@ -6,12 +6,16 @@ export function UpcomingMeetings({
   rooms,
 }: {
   rooms: Prisma.RoomGetPayload<{
-    include: { bookings: { include: { meetings: true } } };
+    include: {
+      bookings: {
+        include: { meetings: true; user: { select: { name: true } } };
+      };
+    };
   }>[];
 }) {
   const bookings = rooms.flatMap((room) => room.bookings);
   const upcomingMeetings = bookings.filter(
-    (booking) => booking.startTime > addHours(new Date(), 2)
+    (booking) => booking.startTime < addHours(new Date(), 2)
   );
 
   if (upcomingMeetings.length === 0) return null;
@@ -24,14 +28,19 @@ export function UpcomingMeetings({
           room.bookings.map((booking) =>
             booking.meetings.map(
               (meeting) =>
-                booking.startTime > addHours(new Date(), 2) && (
-                  <div className="flex flex-col apy-2" key={meeting.id}>
-                    <h3 className="font-semibold text-md">{meeting.title}</h3>
-                    <div className="flex gap-2 items-center">
-                      <span className="text-md text-gray-500 font-semibold">
+                booking.startTime <= addHours(new Date(), 2) && (
+                  <div className="flex flex-col py-1" key={meeting.id}>
+                    <div className="flex items-center gap-1">
+                      <h3 className="font-semibold">{meeting.title}</h3>
+                      {" - "}
+                      <span className="text-sm">{booking.user.name}</span>
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      <span className="text-gray-500 dark:text-gray-400">
                         {room.name}
                       </span>
-                      <span className="text-gray-500 text-md font-semibold">
+                      {" - "}
+                      <span className="text-gray-500 dark:text-gray-400">
                         {format(new Date(booking.startTime), "HH:mm", {
                           locale: ptBR,
                         })}
