@@ -36,7 +36,7 @@ export async function authenticateUser(_prevState: State, formData: FormData) {
 
   const { email, password } = validatedFields.data;
 
-  const user = await db.user.findFirstOrThrow({
+  const user = await db.user.findUnique({
     where: { email },
     select: { emailVerified: true },
   });
