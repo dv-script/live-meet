@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import {
   Building,
+  CalendarCheck2,
   HeartIcon,
   HomeIcon,
   LogInIcon,
@@ -87,7 +88,7 @@ export async function Header() {
                 </div>
               </>
             )}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <SheetClose asChild>
                 <Button
                   variant="ghost"
@@ -116,6 +117,18 @@ export async function Header() {
               )}
               {session && (
                 <>
+                  <SheetClose asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                      asChild
+                    >
+                      <Link href="/my-schedules">
+                        <CalendarCheck2 size={16} />
+                        <span className="block">Minhas Reuniões</span>
+                      </Link>
+                    </Button>
+                  </SheetClose>
                   <SheetClose asChild>
                     <Button
                       variant="ghost"
