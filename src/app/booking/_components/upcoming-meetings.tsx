@@ -15,7 +15,9 @@ export function UpcomingMeetings({
 }) {
   const bookings = rooms.flatMap((room) => room.bookings);
   const upcomingMeetings = bookings.filter(
-    (booking) => booking.startTime <= addHours(new Date(), 2)
+    (booking) =>
+      booking.startTime <= addHours(new Date(), 2) &&
+      booking.startTime > new Date()
   );
 
   if (upcomingMeetings.length === 0) return null;
