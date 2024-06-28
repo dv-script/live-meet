@@ -47,14 +47,6 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
   const { userId, roomId, hourDate, reunionName, reunionDescription } =
     validatedFields.data;
 
-  await db.booking.deleteMany({
-    where: {
-      userId,
-      startTime: {
-        lte: subMinutes(new Date(), 5),
-      },
-    },
-  });
 
   if (hourDate < subMinutes(new Date(), 5).toISOString()) {
     return {
@@ -77,13 +69,16 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
     };
   }
 
-  const booksByUser = await db.booking.findMany({
+  const activeBooksByUser = await db.booking.findMany({
     where: {
       userId,
+      startTime: {
+        gte: new Date(),
+      },
     },
   });
 
-  if (booksByUser.length >= 5) {
+  if (activeBooksByUser.length >= 5) {
     return {
       message:
         "Você já possui 5 reservas ativas. Por favor, cancele uma reserva para fazer outra.",
