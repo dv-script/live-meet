@@ -20,7 +20,7 @@ export function VerifyEmailForm() {
       redirect("/auth/sign-in");
     }
 
-    if (!state.success) {
+    if (!state.success && state.message) {
       toast.error(state.message);
     }
   }, [state.success, state.message]);
