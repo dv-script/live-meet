@@ -4,26 +4,30 @@ import { Button } from "@/app/_components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
+import { getLocationName } from "@/app/_utils/locations";
+import { EditScheduleForm } from "@/app/my-schedules/_components/edit-schedule-form";
 import { Prisma } from "@prisma/client";
-import { format, isAfter, subMinutes } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { format, isAfter } from "date-fns";
 import { CheckIcon } from "lucide-react";
 import { useState } from "react";
-import { EditBookingForm } from "./edit-booking-form";
 
 export function BookedByUserDetailsDialog({
-  hourDate,
+  startTime,
   room,
 }: {
-  hourDate: Date;
+  startTime: Date;
   room: Prisma.RoomGetPayload<{
     include: {
       bookings: {
-        include: { meetings: true; user: { select: { name: true } } };
+        include: {
+          meetings: true;
+          user: { select: { name: true } };
+          room: { select: { name: true; location: true } };
+        };
       };
     };
   }>;
@@ -31,20 +35,16 @@ export function BookedByUserDetailsDialog({
   const [isOpen, setIsOpen] = useState(false);
   const handleOpenDialog = () => setIsOpen((prev) => !prev);
 
-  const formatedHourDate = format(hourDate, "HH:mm");
-  const formatedDate = format(hourDate, "dd MMMM", { locale: ptBR });
-
-  const now = new Date();
-  const adjustedNow = subMinutes(now, 5);
-  const hourHasPassed = isAfter(adjustedNow, hourDate);
+  const formatedHourDate = format(startTime, "HH:mm");
+  const hourHasPassed = isAfter(new Date(), startTime);
 
   const booking = room.bookings.find(
-    (booking) => booking.startTime.toString() === hourDate.toString()
+    (booking) => booking.startTime.toString() === startTime.toString()
   );
 
-  const meeting = booking?.meetings.find(
-    (meeting) => meeting.bookingId === booking.id
-  );
+  if (!booking) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenDialog}>
@@ -52,7 +52,7 @@ export function BookedByUserDetailsDialog({
         <Button
           variant="default"
           disabled={hourHasPassed}
-          className="bg-indigo-500 hover:bg-indigo-600"
+          className="bg-zinc-600 hover:bg-zinc-700"
         >
           <span className="flex gap-1 items-center">
             {formatedHourDate} <CheckIcon size={12} />
@@ -60,20 +60,29 @@ export function BookedByUserDetailsDialog({
         </Button>
       </DialogTrigger>
       <DialogContent className="rounded-lg">
-        <DialogHeader>
-          <DialogTitle className="flex flex-col gap-1">
-            <span className="text-left">
-              Você reservou essa sala{" - "}
-              <strong className="font-bold text-gray-500 dark:text-gray-400">
-                {room.name}
-              </strong>
-            </span>
-            <span className="text-sm text-left text-gray-500 dark:text-gray-400">
-              {formatedDate} às {formatedHourDate}
-            </span>
-          </DialogTitle>
-        </DialogHeader>
-        <EditBookingForm meeting={meeting} setIsOpen={setIsOpen} />
+        <DialogTitle>Deseja editar a sua reserva?</DialogTitle>
+        <DialogDescription>
+          <div className="flex flex-col gap-1 text-sm">
+            <p className="font-semibold text-gray-700">
+              {booking.meetings[0].title}
+            </p>
+            <div className="flex flex-col">
+              <div className="flex gap-1 items-center">
+                <p>{booking.room.name}</p>
+                {" - "}
+                <p>{getLocationName(booking.room.location)}</p>
+              </div>
+              <div className="flex gap-1 items-center">
+                <p>{format(booking.startTime, "dd MMMM yyyy")}</p>
+                {" | "}
+                <p>{format(booking.startTime, "HH:mm")}</p>
+                {" - "}
+                <p>{format(booking.endTime, "HH:mm")}</p>
+              </div>
+            </div>
+          </div>
+        </DialogDescription>
+        <EditScheduleForm booking={booking} setIsOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
   );
