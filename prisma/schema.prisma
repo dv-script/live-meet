@@ -49,6 +49,7 @@ model Booking {
   userId    String
   roomId    Int
   startTime DateTime
+  endTime   DateTime
   room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime  @default(now())
