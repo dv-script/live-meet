@@ -1,6 +1,13 @@
 import { Prisma } from "@prisma/client";
-import { addHours, format } from "date-fns";
+import {
+  addHours,
+  format,
+  formatDistanceToNow,
+  setDefaultOptions,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+setDefaultOptions({ locale: ptBR });
 
 export function UpcomingMeetings({
   rooms,
@@ -8,7 +15,11 @@ export function UpcomingMeetings({
   rooms: Prisma.RoomGetPayload<{
     include: {
       bookings: {
-        include: { meetings: true; user: { select: { name: true } } };
+        include: {
+          meetings: true;
+          user: { select: { name: true } };
+          room: { select: { name: true; location: true } };
+        };
       };
     };
   }>[];
@@ -38,15 +49,16 @@ export function UpcomingMeetings({
                       {" - "}
                       <span className="text-sm">{booking.user.name}</span>
                     </div>
-                    <div className="flex gap-1 items-center">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        {room.name}
-                      </span>
+                    <div className="flex gap-1 text-sm text-gray-500 dark:text-gray-400 items-center">
+                      <span>{room.name}</span>
                       {" - "}
-                      <span className="text-gray-500 dark:text-gray-400">
-                        {format(booking.startTime, "HH:mm", { locale: ptBR })}
+                      <span>{format(booking.startTime, "HH:mm")}</span>
+                      {" - "}
+                      <span>
+                        Iniciará em {formatDistanceToNow(booking.startTime)}
                       </span>
                     </div>
+
                     {meeting.description && (
                       <p className="text-gray-400 text-sm">
                         {meeting.description}
