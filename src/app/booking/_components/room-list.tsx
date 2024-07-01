@@ -14,7 +14,11 @@ export function RoomList({
   rooms: Prisma.RoomGetPayload<{
     include: {
       bookings: {
-        include: { meetings: true; user: { select: { name: true } } };
+        include: {
+          meetings: true;
+          user: { select: { name: true } };
+          room: { select: { location: true; name: true } };
+        };
       };
     };
   }>[];
@@ -29,7 +33,7 @@ export function RoomList({
   };
 
   return (
-    <div className="grid items-center sm:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Salas de Reuniões</h1>
@@ -44,9 +48,6 @@ export function RoomList({
             mode="single"
             className="capitalize"
             fromDate={new Date()}
-            classNames={{
-              cell: "md:mx-1",
-            }}
             selected={selectedDate}
             onSelect={handleSelectDate}
           />
