@@ -1,3 +1,4 @@
+import { getLocationName } from "@/app/_utils/locations";
 import { Prisma } from "@prisma/client";
 import {
   addHours,
@@ -44,16 +45,20 @@ export function UpcomingMeetings({
                 booking.startTime <= addHours(new Date(), 2) &&
                 booking.startTime > new Date() && (
                   <div className="flex flex-col py-1" key={meeting.id}>
-                    <div className="flex items-center gap-1">
-                      <h3 className="font-semibold">{meeting.title}</h3>
-                      {" - "}
-                      <span className="text-sm">{booking.user.name}</span>
-                    </div>
-                    <div className="flex gap-1 text-sm text-gray-500 dark:text-gray-400 items-center">
-                      <span>{room.name}</span>
-                      {" - "}
-                      <span>{format(booking.startTime, "HH:mm")}</span>
-                      {" - "}
+                    <h3 className="font-semibold leading-none">
+                      {meeting.title} -{" "}
+                      <span className="text-sm font-normal">
+                        {booking.user.name}
+                      </span>
+                    </h3>
+                    <div className="flex flex-col text-sm text-gray-500 dark:text-gray-400">
+                      <span>
+                        {room.name} - {getLocationName(room.location)}
+                      </span>
+                      <span>
+                        {format(booking.startTime, "HH:mm")} -{" "}
+                        {format(booking.endTime, "HH:mm")}
+                      </span>
                       <span>
                         Iniciará em {formatDistanceToNow(booking.startTime)}
                       </span>
