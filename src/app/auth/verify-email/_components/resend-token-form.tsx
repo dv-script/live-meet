@@ -1,6 +1,7 @@
 "use client";
 
 import { resendEmailVerification } from "@/app/_actions/revalidate-email-verification";
+import { FormError } from "@/app/_components/form-error";
 import { FormField } from "@/app/_components/form-field";
 import { SubmitButton } from "@/app/_components/submit-button";
 import { useEffect, useRef } from "react";
@@ -25,8 +26,9 @@ export function ResendTokenForm() {
 
     if (state.success === false) {
       toast.error(state.message);
+      state.message = "";
     }
-  }, [state.success, state.message]);
+  }, [state]);
 
   return (
     <form
@@ -39,6 +41,9 @@ export function ResendTokenForm() {
         placeholder="Insira o seu e-mail já cadastrado"
         errorMessages={state.errors?.email}
       />
+      {!state?.success && state?.message && (
+        <FormError errorMessage={state.message} />
+      )}
       <SubmitButton size="sm" type="submit">
         Reenviar token
       </SubmitButton>
