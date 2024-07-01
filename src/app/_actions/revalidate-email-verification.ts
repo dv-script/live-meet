@@ -6,10 +6,12 @@ import { generateVerificationToken } from "../_utils/token";
 import { sendEmailVerification } from "./send-email-verification";
 
 const resendEmailVerificationSchema = z.object({
-  email: z.string().email({ message: "Por favor, insira um e-mail válido" }),
-  // .regex(/@livemode.com$/, {
-  //   message: "Por favor, insira um e-mail de domínio @livemode.com",
-  // })
+  email: z
+    .string()
+    .email({ message: "Por favor, insira um e-mail válido" })
+    .regex(/@livemode.com$/, {
+      message: "Por favor, insira um e-mail de domínio @livemode.com",
+    }),
 });
 
 export type State = {

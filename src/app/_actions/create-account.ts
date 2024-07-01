@@ -14,10 +14,12 @@ const createAccountSchema = z.object({
     .min(3, { message: "O nome deve ter no mínimo 3 caracteres" }),
 
   department: z.string({ message: "Por favor, selecione o seu time" }),
-  email: z.string().email({ message: "Por favor, insira um e-mail válido" }),
-  // .regex(/@livemode.com$/, {
-  //   message: "Por favor, insira um e-mail de domínio @livemode.com",
-  // })
+  email: z
+    .string()
+    .email({ message: "Por favor, insira um e-mail válido" })
+    .regex(/@livemode.com$/, {
+      message: "Por favor, insira um e-mail de domínio @livemode.com",
+    }),
   password: z
     .string()
     .min(8, { message: "A senha deve ter no mínimo 8 caracteres" })
