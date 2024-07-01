@@ -3,12 +3,12 @@
 import { z } from "zod";
 import { db } from "../_lib/prisma";
 import { revalidatePath } from "next/cache";
-import { subMinutes } from "date-fns";
+import { auth } from "../auth/providers";
 
 const scheduleARoomSchema = z.object({
-  userId: z.string(),
   roomId: z.number(),
-  hourDate: z.string(),
+  startTime: z.string(),
+  endTime: z.string({ message: "Horário de término é obrigatório." }),
   reunionName: z
     .string({ message: "Nome da reunião é obrigatório." })
     .min(3, { message: "Nome da reunião deve ter no mínimo 3 caracteres." })
@@ -18,9 +18,9 @@ const scheduleARoomSchema = z.object({
 
 export type State = {
   errors?: {
-    userId?: string[];
     roomId?: string[];
-    hourDate?: string[];
+    startTime?: string[];
+    endTime?: string[];
     reunionName?: string[];
     reunionDescription?: string[];
   };
@@ -29,10 +29,20 @@ export type State = {
 };
 
 export async function scheduleARoom(_prevState: State, formData: FormData) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return {
+      message: "Usuário não autenticado.",
+      success: false,
+    };
+  }
+
   const validatedFields = scheduleARoomSchema.safeParse({
-    userId: formData.get("userId"),
     roomId: Number(formData.get("roomId")),
-    hourDate: formData.get("hourDate"),
+    startTime: formData.get("startTime"),
+    endTime: formData.get("endTime"),
     reunionName: formData.get("reunionName"),
     reunionDescription: formData.get("reunionDescription"),
   });
@@ -44,21 +54,42 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
     };
   }
 
-  const { userId, roomId, hourDate, reunionName, reunionDescription } =
+  const { roomId, startTime, endTime, reunionName, reunionDescription } =
     validatedFields.data;
 
-
-  if (hourDate < subMinutes(new Date(), 5).toISOString()) {
+  if (new Date(startTime) < new Date()) {
     return {
       message: "Não é possível reservar salas em horários passados.",
       success: false,
     };
   }
 
+  if (new Date(endTime) <= new Date(startTime)) {
+    return {
+      message: "Horário de término deve ser maior que o horário de início.",
+      success: false,
+    };
+  }
+
   const isRoomBooked = await db.booking.findFirst({
     where: {
-      startTime: new Date(hourDate),
-      roomId,
+      AND: [
+        {
+          startTime: {
+            gte: new Date(startTime),
+          },
+        },
+        {
+          startTime: {
+            lt: new Date(endTime),
+          },
+        },
+        {
+          roomId: {
+            equals: roomId,
+          },
+        },
+      ],
     },
   });
 
@@ -89,25 +120,16 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
   try {
     await db.booking.create({
       data: {
-        startTime: new Date(hourDate),
-        roomId,
         userId,
-      },
-    });
-
-    const bookingId = await db.booking.findFirstOrThrow({
-      where: {
-        startTime: new Date(hourDate),
         roomId,
-        userId,
-      },
-    });
-
-    await db.meeting.create({
-      data: {
-        title: reunionName,
-        description: reunionDescription,
-        bookingId: bookingId.id,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
+        meetings: {
+          create: {
+            title: reunionName,
+            description: reunionDescription,
+          },
+        },
       },
     });
 
