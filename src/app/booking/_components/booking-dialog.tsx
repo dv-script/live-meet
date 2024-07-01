@@ -8,31 +8,33 @@ import {
   DialogTitle,
 } from "@/app/_components/ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import { format, isAfter, subMinutes } from "date-fns";
+import { format, isAfter } from "date-fns";
 import { useState } from "react";
 import { BookingForm } from "./booking-form";
 import { Prisma } from "@prisma/client";
 import { ptBR } from "date-fns/locale";
 
 export function BookingDialog({
-  hourDate,
+  startTime,
   room,
   isBooked,
-  userId,
 }: {
-  hourDate: Date;
+  startTime: Date;
   room: Prisma.RoomGetPayload<{
     include: {
       bookings: {
-        include: { meetings: true; user: { select: { name: true } } };
+        include: {
+          meetings: true;
+          user: { select: { name: true } };
+          room: { select: { location: true; name: true } };
+        };
       };
     };
   }>;
   isBooked: boolean;
-  userId: string | undefined;
 }) {
   const [selectedHourDate, setSelectedHourDate] = useState<string>(
-    hourDate.toISOString()
+    startTime.toISOString()
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -42,13 +44,10 @@ export function BookingDialog({
     setSelectedHourDate(e.currentTarget.value);
   };
 
-  const now = new Date();
-  const adjustedNow = subMinutes(now, 5);
+  const hourHasPassed = isAfter(new Date(), startTime);
 
-  const hourHasPassed = isAfter(adjustedNow, hourDate);
-
-  const formatedHourDate = format(hourDate, "HH:mm");
-  const formatedDate = format(hourDate, "dd MMMM", { locale: ptBR });
+  const formatedHourDate = format(startTime, "HH:mm");
+  const formatedDate = format(startTime, "dd MMMM", { locale: ptBR });
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenDialog}>
@@ -77,8 +76,7 @@ export function BookingDialog({
           </DialogTitle>
         </DialogHeader>
         <BookingForm
-          userId={userId}
-          hourDate={hourDate}
+          startTime={startTime}
           roomId={room.id}
           setIsOpen={setIsOpen}
         />
