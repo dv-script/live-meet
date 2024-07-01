@@ -161,31 +161,6 @@ export async function Header() {
                 <div className="py-3">
                   <Separator />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm mb-2 pl-4 font-semibold">
-                    Salas de Reunião
-                  </span>
-                  <div className="flex flex-col gap-1 max-h-40 overflow-y-scroll">
-                    {rooms.map((room) => (
-                      <SheetClose key={room.id} asChild>
-                        <Button
-                          asChild
-                          variant="ghost"
-                          className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
-                        >
-                          <Link href={`/room/${room.id}`}>
-                            <Building />
-                            <span>{room.name}</span>
-                          </Link>
-                        </Button>
-                      </SheetClose>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="py-3">
-                  <Separator />
-                </div>
                 <SignOutDialog />
               </>
             )}
