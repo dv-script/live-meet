@@ -3,7 +3,7 @@ import { Card, CardContent } from "@ui/card";
 import { Popover, PopoverTrigger, PopoverContent } from "@ui/popover";
 import { Button } from "@ui/button";
 import { CalendarIcon, Info } from "lucide-react";
-import { format, isAfter, subMinutes } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getLocationName } from "@/app/_utils/locations";
 import { BookingDialog } from "./booking-dialog";
@@ -17,7 +17,11 @@ export function RoomItem({
   room: Prisma.RoomGetPayload<{
     include: {
       bookings: {
-        include: { meetings: true; user: { select: { name: true } } };
+        include: {
+          meetings: true;
+          user: { select: { name: true } };
+          room: { select: { location: true; name: true } };
+        };
       };
     };
   }>;
@@ -65,31 +69,31 @@ export function RoomItem({
           </div>
           <div className="grid grid-cols-4 gap-2">
             {Array.from({ length: 30 }).map((_, index) => {
-              const hourDate = new Date(selectedDate);
+              const startTime = new Date(selectedDate);
               const startHour = 9;
               const hourToAdd = Math.floor(index / 2) + startHour;
               const minutesToAdd = (index % 2) * 30;
-              hourDate.setHours(hourToAdd, minutesToAdd, 0, 0);
+              startTime.setHours(hourToAdd, minutesToAdd, 0, 0);
 
-              const isSpecificHourBooked = room.bookings.some(
+              const isBookedByUser = room.bookings.some(
                 (booking) =>
-                  format(booking.startTime, "yyyy-MM-dd HH:mm") ===
-                  format(hourDate, "yyyy-MM-dd HH:mm")
+                  booking.userId === userId &&
+                  startTime >= new Date(booking.startTime) &&
+                  startTime < new Date(booking.endTime)
               );
 
-              const bookedByUser = room.bookings.find(
+              const isBooked = room.bookings.some(
                 (booking) =>
-                  format(booking.startTime, "yyyy-MM-dd HH:mm") ===
-                    format(hourDate, "yyyy-MM-dd HH:mm") &&
-                  booking.userId === userId
+                  startTime >= new Date(booking.startTime) &&
+                  startTime < new Date(booking.endTime)
               );
 
-              if (bookedByUser) {
+              if (isBookedByUser) {
                 return (
                   <BookedByUserDetailsDialog
                     key={index}
                     room={room}
-                    hourDate={hourDate}
+                    startTime={startTime}
                   />
                 );
               }
@@ -97,10 +101,9 @@ export function RoomItem({
               return (
                 <BookingDialog
                   key={index}
-                  hourDate={hourDate}
+                  startTime={startTime}
                   room={room}
-                  isBooked={isSpecificHourBooked}
-                  userId={userId}
+                  isBooked={isBooked}
                 />
               );
             })}
