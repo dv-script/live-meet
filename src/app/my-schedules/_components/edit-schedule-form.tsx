@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/app/_components/ui/select";
 import { Prisma } from "@prisma/client";
-import { addMinutes, format, isSameDay, isToday } from "date-fns";
+import { addMinutes, format, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useCallback, useEffect, useState } from "react";
 import { SelectSingleEventHandler } from "react-day-picker";
