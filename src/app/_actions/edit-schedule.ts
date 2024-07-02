@@ -111,34 +111,31 @@ export async function editSchedule(_prevState: State, formData: FormData) {
     };
   }
 
-  const roomAlreadyBooked = await db.booking.findFirst({
+  const alreadyBooked = await db.booking.findFirst({
     where: {
       AND: [
         {
           startTime: {
-            lte: new Date(startTime),
+            gte: new Date(startTime),
           },
-        },
-        {
           endTime: {
-            gt: new Date(endTime),
+            lte: new Date(endTime),
           },
         },
         {
+          roomId,
           id: {
-            not: meetingId,
-          },
-          roomId: {
-            equals: roomId,
+            not: meeting.bookingId,
           },
         },
       ],
     },
   });
 
-  if (roomAlreadyBooked) {
+  if (alreadyBooked) {
     return {
-      message: "Sala já reservada para este horário. Por favor, escolha outro.",
+      message:
+        "Essa sala já está reservada nesse horário. Por favor, tente novamente.",
       success: false,
     };
   }
@@ -163,7 +160,7 @@ export async function editSchedule(_prevState: State, formData: FormData) {
     revalidatePath("/booking");
 
     return {
-      message: "Reserva editada com sucesso! 🎉",
+      message: "Reserva alterada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {
