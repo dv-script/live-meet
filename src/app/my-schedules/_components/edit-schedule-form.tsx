@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/app/_components/ui/select";
 import { Prisma } from "@prisma/client";
-import { addMinutes, format, isToday } from "date-fns";
+import { addMinutes, format, isSameDay, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useCallback, useEffect, useState } from "react";
 import { SelectSingleEventHandler } from "react-day-picker";
@@ -51,52 +51,50 @@ export function EditScheduleForm({
   const initialState = { message: "", errors: {} };
   const [state, dispatch] = useFormState(editSchedule, initialState);
 
-  const [selectedDate, setSelectedDate] = useState(new Date(booking.startTime));
-  const [selectedEndTime, setSelectedEndTime] = useState(
-    new Date(booking.endTime)
-  );
-  const [selectedStartTime, setSelectedStartTime] = useState(
-    new Date(booking.startTime)
-  );
+  const [selectedDate, setSelectedDate] = useState(booking.startTime);
+  const [selectedEndTime, setSelectedEndTime] = useState(booking.endTime);
+  const [selectedStartTime, setSelectedStartTime] = useState(booking.startTime);
 
-  let allHours = generateDateHours(selectedDate);
+  const allHours = generateDateHours(selectedDate);
 
   const handleSelectDate: SelectSingleEventHandler = (date) => {
     if (date) {
       setSelectedDate(date);
-      let newStartTimes = generateDateHours(date);
+
+      const newStartTimes = generateDateHours(date);
       let defaultStartTime = newStartTimes[0];
+
       if (isToday(date)) {
-        const currentTime = new Date();
         defaultStartTime =
-          newStartTimes.find((d) => d > currentTime) || newStartTimes[0];
+          newStartTimes.find((d) => d > new Date()) || newStartTimes[0];
       }
-      setSelectedStartTime(defaultStartTime);
-      setSelectedEndTime(addMinutes(defaultStartTime, 30));
     }
   };
 
   const handleStartTime = (dateString: string) => {
+    console.log(dateString);
     const date = new Date(dateString);
+    const potentialEndTime = addMinutes(new Date(dateString), 30);
+
     setSelectedStartTime(date);
-    const potentialEndTime = addMinutes(date, 30);
-    setSelectedEndTime(potentialEndTime);
+    if (date >= selectedEndTime) {
+      setSelectedEndTime(potentialEndTime);
+    }
   };
 
   const handleEndTime = (dateString: string) => {
     const date = new Date(dateString);
+
     setSelectedEndTime(date);
   };
 
-  const currentTime = new Date();
-  const isTodayBoolean =
-    selectedDate.toDateString() === currentTime.toDateString();
+  const isTodayValidation = isToday(selectedDate);
   const filteredStartTimes = allHours.filter((date) => {
     if (date.getHours() === 0) {
       return false;
     }
 
-    return isTodayBoolean ? date > currentTime : true;
+    return isTodayValidation ? date > new Date() : true;
   });
 
   const filteredEndTimes = allHours.filter((date) => {
@@ -108,15 +106,15 @@ export function EditScheduleForm({
   }, [setIsOpen]);
 
   useEffect(() => {
+    if (!state.success && state.message) {
+      toast.error(state.message);
+    }
+
     if (state.success) {
       toast.success(state.message);
       handleCloseDialog();
     }
-
-    if (state.success && state.message) {
-      toast.error(state.message);
-    }
-  }, [state.success, state.message, handleCloseDialog]);
+  }, [state, handleCloseDialog]);
 
   return (
     <form className="flex flex-col gap-2" action={dispatch}>
@@ -151,10 +149,10 @@ export function EditScheduleForm({
             <Label>Ínicio</Label>
             <Select
               name="startTime"
-              defaultValue={format(booking.startTime, "HH:mm")}
+              defaultValue={selectedStartTime.toISOString()}
               onValueChange={handleStartTime}
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger>
                 <SelectValue>{format(selectedStartTime, "HH:mm")}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -184,13 +182,11 @@ export function EditScheduleForm({
             <Label>Término</Label>
             <Select
               name="endTime"
-              defaultValue={format(new Date(booking.endTime), "HH:mm")}
+              value={selectedEndTime.toISOString()}
               onValueChange={handleEndTime}
             >
-              <SelectTrigger className="col-span-3">
-                <SelectValue>
-                  {format(new Date(selectedEndTime), "HH:mm")}
-                </SelectValue>
+              <SelectTrigger>
+                <SelectValue>{format(selectedEndTime, "HH:mm")}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {filteredEndTimes.map((date) => (
