@@ -1,6 +1,12 @@
 import { db } from "@/app/_lib/prisma";
 import { AddNewUserDialog } from "./_components/_add-new-user/add-new-user-dialog";
 import { UsersTable } from "./_components/_users-table/users-table";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "LiveMeet | Dashboard - Usuários",
+  description: "Gerencie todos os usuários da LiveMeet",
+};
 
 export default async function Page() {
   const users = await db.user.findMany({

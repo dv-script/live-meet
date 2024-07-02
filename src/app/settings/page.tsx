@@ -1,6 +1,12 @@
+import { Metadata } from "next";
 import { db } from "../_lib/prisma";
 import { auth } from "../auth/providers";
 import { SettingsContainer } from "./_components/settings-container";
+
+export const metadata: Metadata = {
+  title: "LiveMeet | Configurações",
+  description: "Configurações da conta do usuário",
+};
 
 export default async function Page() {
   const session = await auth();

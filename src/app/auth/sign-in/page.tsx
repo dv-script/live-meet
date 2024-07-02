@@ -1,6 +1,12 @@
 import { SignInForm } from "./_components/sign-in-form";
 import { Button } from "@/app/_components/ui/button";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "LiveMeet | Login",
+  description: "Faça login com a sua conta Livemode",
+};
 
 export default function Page() {
   return (

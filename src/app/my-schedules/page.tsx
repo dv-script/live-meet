@@ -3,6 +3,12 @@ import { Button } from "../_components/ui/button";
 import { db } from "../_lib/prisma";
 import { auth } from "../auth/providers";
 import { ScheduleList } from "./_components/schedule-list";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "LiveMeet | Minhas Reuniões",
+  description: "Veja as reuniões que você agendou",
+};
 
 export default async function Page() {
   const session = await auth();

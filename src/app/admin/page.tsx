@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { Button } from "../_components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "LiveMeet | Dashboard de Administrador",
+  description:
+    "Gerencie todos os usuários, salas de reuniões e reuniões da LiveMeet",
+};
 
 export default function Page() {
   return (

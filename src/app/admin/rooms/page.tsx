@@ -1,6 +1,12 @@
 import { db } from "@/app/_lib/prisma";
 import { AddNewRoomDialog } from "./_components/_add-new-room/add-new-room-dialog";
 import { RoomsTable } from "./_components/_rooms-table/rooms-table";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "LiveMeet | Dashboard - Salas de Reuniões",
+  description: "Gerencie todas as salas de reuniões da LiveMeet",
+};
 
 export default async function Page() {
   const rooms = await db.room.findMany({
