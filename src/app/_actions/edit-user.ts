@@ -13,10 +13,8 @@ const editUserSchema = z.object({
     .string()
     .min(3, { message: "Nome precisa ter no mínimo 3 caracteres" }),
   email: z.string().email({ message: "O e-mail não é válido" }),
-  department: z
-    .string({ message: "É necessário selecionar um departamento" }),
-  role: z
-    .string({ message: "É necessário selecionar um cargo" })
+  department: z.string({ message: "É necessário selecionar um departamento" }),
+  role: z.string({ message: "É necessário selecionar um cargo" }),
 });
 
 export type State = {
@@ -48,6 +46,19 @@ export async function editUser(_prevState: State, formData: FormData) {
 
   const { id, name, email, role, department } = validatedFields.data;
 
+  const userExists = await db.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!userExists) {
+    return {
+      message: "Usuário não encontrado.",
+      success: false,
+    };
+  }
+
   const validDepartment = departmentValidation(department);
   const validRole = roleValidation(role);
 
@@ -67,7 +78,7 @@ export async function editUser(_prevState: State, formData: FormData) {
 
     revalidatePath("/admin/users");
     return {
-      message: "Usuário atualizado com sucesso.",
+      message: "Usuário atualizado com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

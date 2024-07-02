@@ -60,7 +60,7 @@ export async function cancelSchedule(_prevState: State, formData: FormData) {
     revalidatePath("/");
 
     return {
-      message: "Reserva cancelada com sucesso!",
+      message: "Reserva cancelada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

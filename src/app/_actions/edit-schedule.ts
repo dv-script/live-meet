@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { db } from "../_lib/prisma";
 import { revalidatePath } from "next/cache";
+import { auth } from "../auth/providers";
 
 const editScheduleSchema = z.object({
   meetingId: z.string(),
@@ -30,6 +31,15 @@ export type State = {
 };
 
 export async function editSchedule(_prevState: State, formData: FormData) {
+  const session = await auth();
+
+  if (!session?.user) {
+    return {
+      message: "Você precisa estar logado para editar a reserva.",
+      success: false,
+    };
+  }
+
   const validatedFields = editScheduleSchema.safeParse({
     roomId: Number(formData.get("roomId")),
     meetingId: formData.get("meetingId"),
@@ -54,6 +64,36 @@ export async function editSchedule(_prevState: State, formData: FormData) {
     startTime,
     endTime,
   } = validatedFields.data;
+
+  const meeting = await db.meeting.findUnique({
+    where: {
+      id: meetingId,
+    },
+    include: {
+      booking: true,
+    },
+  });
+
+  if (!meeting) {
+    return {
+      message: "Reunião não encontrada. Por favor, tente novamente.",
+      success: false,
+    };
+  }
+
+  if (roomId !== meeting.booking.roomId) {
+    return {
+      message: "Sala de reunião inválida. Por favor, tente novamente.",
+      success: false,
+    };
+  }
+
+  if (meeting.booking.userId !== session?.user?.id) {
+    return {
+      message: "Essa reunião não pertence a você. Por favor, tente novamente.",
+      success: false,
+    };
+  }
 
   if (new Date(startTime) < new Date()) {
     return {
@@ -123,7 +163,7 @@ export async function editSchedule(_prevState: State, formData: FormData) {
     revalidatePath("/booking");
 
     return {
-      message: "Reserva editada com sucesso!",
+      message: "Reserva editada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

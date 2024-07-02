@@ -120,7 +120,7 @@ export async function createAccount(_prevState: State, formData: FormData) {
     });
 
     return {
-      message: "Conta criada com sucesso. Verifique seu e-mail.",
+      message: "Conta criada com sucesso! Verifique seu e-mail 🎉",
       success: true,
     };
   } catch (error) {

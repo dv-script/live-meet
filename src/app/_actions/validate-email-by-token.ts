@@ -74,7 +74,7 @@ export async function validateEmailByToken(
     });
 
     return {
-      message: "E-mail verificado com sucesso.",
+      message: "E-mail verificado com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

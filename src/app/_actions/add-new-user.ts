@@ -99,7 +99,7 @@ export async function addNewUser(_prevState: State, formData: FormData) {
     revalidatePath("/admin/users");
 
     return {
-      message: "Usuário criado com sucesso.",
+      message: "Usuário criado com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

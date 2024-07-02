@@ -30,7 +30,18 @@ export async function deleteRoom(_prevState: State, formData: FormData) {
 
   const { id } = validatedFields.data;
 
-  console.log(id);
+  const room = await db.room.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!room) {
+    return {
+      message: "Sala de reunião não encontrada. Por favor, tente novamente.",
+      success: false,
+    };
+  }
 
   try {
     await db.room.delete({
@@ -41,12 +52,12 @@ export async function deleteRoom(_prevState: State, formData: FormData) {
 
     revalidatePath("/admin/rooms");
     return {
-      message: "Sala de reunião deletada com sucesso.",
+      message: "Sala de reunião deletada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {
     return {
-      message: "Erro ao deletar o usuário.",
+      message: "Erro ao deletar a sala de reunião.",
       success: false,
     };
   }

@@ -77,7 +77,7 @@ export async function addNewRoom(_prevState: State, formData: FormData) {
     revalidatePath("/admin/rooms");
 
     return {
-      message: "Sala de reunião criada com sucesso.",
+      message: "Sala de reunião criada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

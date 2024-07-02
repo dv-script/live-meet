@@ -53,12 +53,10 @@ export async function resendEmailVerification(
 
   if (userInDb?.emailVerified) {
     return {
-      message: "E-mail já verificado.",
+      message: "E-mail já verificado. Faça o seu login.",
       success: false,
     };
   }
-
-  console.log(userInDb, userInDb?.emailVerified);
 
   const tokenStillValid = userInDb?.verificationTokens.flatMap((token) => {
     return new Date(token.expires) > new Date();
@@ -86,11 +84,9 @@ export async function resendEmailVerification(
       token: newToken.id,
     });
 
-    console.log("email enviado com sucesso");
-
     return {
       message:
-        "E-mail reenviado com sucesso! Por favor, verifique sua caixa de entrada.",
+        "E-mail reenviado com sucesso! Por favor, verifique sua caixa de entrada 🎉",
       success: true,
     };
   } catch (error) {

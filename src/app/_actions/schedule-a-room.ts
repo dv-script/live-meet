@@ -100,23 +100,6 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
     };
   }
 
-  const activeBooksByUser = await db.booking.findMany({
-    where: {
-      userId,
-      startTime: {
-        gte: new Date(),
-      },
-    },
-  });
-
-  if (activeBooksByUser.length >= 5) {
-    return {
-      message:
-        "Você já possui 5 reservas ativas. Por favor, cancele uma reserva para fazer outra.",
-      success: false,
-    };
-  }
-
   try {
     await db.booking.create({
       data: {
@@ -136,7 +119,7 @@ export async function scheduleARoom(_prevState: State, formData: FormData) {
     revalidatePath("/booking");
 
     return {
-      message: "Sala reservada com sucesso!",
+      message: "Sala reservada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

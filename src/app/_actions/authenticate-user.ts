@@ -4,6 +4,7 @@ import { signIn } from "@/app/auth/providers";
 import { AuthError } from "next-auth";
 import { z } from "zod";
 import { db } from "../_lib/prisma";
+import { sendEmailVerification } from "./send-email-verification";
 
 const authenticateUserSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um e-mail válido" }),
@@ -57,7 +58,7 @@ export async function authenticateUser(_prevState: State, formData: FormData) {
 
     return {
       success: true,
-      message: "Você foi logado com sucesso.",
+      message: "Você foi logado com sucesso! 🎉",
     };
   } catch (error) {
     if (error instanceof AuthError) {

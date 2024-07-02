@@ -51,7 +51,7 @@ export async function editRoom(_prevState: State, formData: FormData) {
 
   const { id, name, description, capacity, location } = validatedFields.data;
 
-  const roomExists = await db.room.findUniqueOrThrow({
+  const roomExists = await db.room.findUnique({
     where: {
       name,
     },
@@ -64,8 +64,6 @@ export async function editRoom(_prevState: State, formData: FormData) {
       success: false,
     };
   }
-
-  console.log("Validating location");
 
   const validLocation = locationValidation(location);
 
@@ -85,7 +83,7 @@ export async function editRoom(_prevState: State, formData: FormData) {
     revalidatePath("/admin/rooms");
 
     return {
-      message: "Sala de reunião atualizada com sucesso.",
+      message: "Sala de reunião atualizada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

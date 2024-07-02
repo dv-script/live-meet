@@ -64,7 +64,7 @@ export async function editMyProfile(_prevState: State, formData: FormData) {
     revalidatePath("/");
 
     return {
-      message: "Sua conta foi atualizada com sucesso.",
+      message: "Sua conta foi atualizada com sucesso! 🎉",
       success: true,
     };
   } catch (error) {

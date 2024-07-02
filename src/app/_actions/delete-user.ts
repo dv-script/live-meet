@@ -36,9 +36,6 @@ export async function deleteUser(_prevState: State, formData: FormData) {
     return {
       message: "Você não pode deletar o seu próprio usuário.",
       success: false,
-      errors: {
-        id: ["Você não pode deletar o seu próprio usuário."],
-      },
     };
   }
 
@@ -51,12 +48,12 @@ export async function deleteUser(_prevState: State, formData: FormData) {
 
     revalidatePath("/admin/users");
     return {
-      message: "Usuário deletado com sucesso.",
+      message: "Usuário deletado com sucesso! 🎉",
       success: true,
     };
   } catch (error) {
     return {
-      message: "Erro ao deletar o usuário.",
+      message: "Erro ao deletar o usuário. Por favor, tente novamente.",
       success: false,
     };
   }
