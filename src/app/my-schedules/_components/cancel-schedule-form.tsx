@@ -29,7 +29,7 @@ export function CancelScheduleForm({
   useEffect(() => {
     if (state.success) {
       toast.success(state.message);
-      // handleCloseDialog();
+      handleCloseDialog();
     }
 
     if (!state.success && state.message) {
