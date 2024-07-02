@@ -20,17 +20,12 @@ import {
   Shield,
 } from "lucide-react";
 import { Separator } from "./ui/separator";
-import { db } from "../_lib/prisma";
 import { SignOutDialog } from "./sign-out-dialog";
 import { auth } from "../auth/providers";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import LogoImage from "@public/logo.png";
 
 export async function Header() {
-  const rooms = await db.room.findMany({
-    orderBy: { name: "asc" },
-  });
-
   const session = await auth();
 
   return (
@@ -58,111 +53,113 @@ export async function Header() {
           <SheetHeader>
             <SheetTitle className="text-left">Menu</SheetTitle>
           </SheetHeader>
-          <div className="flex flex-col gap-2 pt-6">
-            {session ? (
-              <div className="flex gap-2 items-center pb-4">
-                <Avatar>
-                  <AvatarFallback>{session.user?.name![0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <h2 className="font-semibold">{session.user?.name}</h2>
-                  <span className="text-xs text-muted-foreground">
-                    {session.user?.email}
-                  </span>
+          <div className="flex flex-col justify-between h-full gap-2 py-6">
+            <div>
+              {session ? (
+                <div className="flex gap-2 items-center pb-4">
+                  <Avatar>
+                    <AvatarFallback>{session.user?.name![0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <h2 className="font-semibold">{session.user?.name}</h2>
+                    <span className="text-xs text-muted-foreground">
+                      {session.user?.email}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <>
-                <div className="flex justify-between items-center gap-2">
-                  <h2 className="font-semibold">Olá. Faça seu login!</h2>
-                  <SheetClose asChild>
-                    <Button asChild size="icon-xs">
-                      <Link href="/auth/sign-in">
-                        <LogInIcon size={14} />
-                      </Link>
-                    </Button>
-                  </SheetClose>
-                </div>
-                <div className="py-3">
-                  <Separator />
-                </div>
-              </>
-            )}
-            <div className="flex flex-col gap-1">
-              <SheetClose asChild>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
-                  asChild
-                >
-                  <Link href="/">
-                    <HomeIcon size={16} />
-                    <span className="block">Ínicio</span>
-                  </Link>
-                </Button>
-              </SheetClose>
-              {session?.user?.role === "ADMIN" && (
+              ) : (
+                <>
+                  <div className="flex justify-between items-center gap-2">
+                    <h2 className="font-semibold">Olá. Faça seu login!</h2>
+                    <SheetClose asChild>
+                      <Button asChild size="icon-xs">
+                        <Link href="/auth/sign-in">
+                          <LogInIcon size={14} />
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  </div>
+                  <div className="py-3">
+                    <Separator />
+                  </div>
+                </>
+              )}
+              <div className="flex flex-col gap-1">
                 <SheetClose asChild>
                   <Button
-                    asChild
                     variant="ghost"
                     className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                    asChild
                   >
-                    <Link href="/admin">
-                      <Shield size={16} />
-                      <span className="block">Admin</span>
+                    <Link href="/">
+                      <HomeIcon size={16} />
+                      <span className="block">Ínicio</span>
                     </Link>
                   </Button>
                 </SheetClose>
-              )}
-              {session && (
-                <>
+                {session?.user?.role === "ADMIN" && (
                   <SheetClose asChild>
                     <Button
+                      asChild
                       variant="ghost"
                       className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
-                      asChild
                     >
-                      <Link href="/my-schedules">
-                        <CalendarCheck2 size={16} />
-                        <span className="block">Minhas Reuniões</span>
+                      <Link href="/admin">
+                        <Shield size={16} />
+                        <span className="block">Admin</span>
                       </Link>
                     </Button>
                   </SheetClose>
-                  <SheetClose asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
-                      asChild
-                    >
-                      <Link href="/my-favorite-rooms">
-                        <HeartIcon size={16} />
-                        <span className="block">Salas Favoritadas</span>
-                      </Link>
-                    </Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
-                      asChild
-                    >
-                      <Link href="/settings">
-                        <SettingsIcon size={16} />
-                        <span className="block">Configurações</span>
-                      </Link>
-                    </Button>
-                  </SheetClose>
-                </>
-              )}
+                )}
+                {session && (
+                  <>
+                    <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                        asChild
+                      >
+                        <Link href="/my-schedules">
+                          <CalendarCheck2 size={16} />
+                          <span className="block">Minhas Reuniões</span>
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                        asChild
+                      >
+                        <Link href="/my-favorite-rooms">
+                          <HeartIcon size={16} />
+                          <span className="block">Salas Favoritadas</span>
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-3 items-center rounded-full text-sm font-normal"
+                        asChild
+                      >
+                        <Link href="/settings">
+                          <SettingsIcon size={16} />
+                          <span className="block">Configurações</span>
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  </>
+                )}
+              </div>
             </div>
             {session && (
-              <>
+              <div>
                 <div className="py-3">
                   <Separator />
                 </div>
                 <SignOutDialog />
-              </>
+              </div>
             )}
           </div>
         </SheetContent>
